@@ -1,0 +1,419 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Importamos las librerias a utilizar"
+      ],
+      "metadata": {
+        "id": "zOoBTPALo6Qz"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install -U langchain-community"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "pCh_JpNgQIIc",
+        "outputId": "a6194983-c1ea-4d72-da7b-57ac9b48d56c",
+        "collapsed": true
+      },
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting langchain-community\n",
+            "  Downloading langchain_community-0.3.20-py3-none-any.whl.metadata (2.4 kB)\n",
+            "Requirement already satisfied: langchain-core<1.0.0,>=0.3.45 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (0.3.47)\n",
+            "Requirement already satisfied: langchain<1.0.0,>=0.3.21 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (0.3.21)\n",
+            "Requirement already satisfied: SQLAlchemy<3,>=1.4 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (2.0.39)\n",
+            "Requirement already satisfied: requests<3,>=2 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (2.32.3)\n",
+            "Requirement already satisfied: PyYAML>=5.3 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (6.0.2)\n",
+            "Requirement already satisfied: aiohttp<4.0.0,>=3.8.3 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (3.11.14)\n",
+            "Requirement already satisfied: tenacity!=8.4.0,<10,>=8.1.0 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (9.0.0)\n",
+            "Collecting dataclasses-json<0.7,>=0.5.7 (from langchain-community)\n",
+            "  Downloading dataclasses_json-0.6.7-py3-none-any.whl.metadata (25 kB)\n",
+            "Collecting pydantic-settings<3.0.0,>=2.4.0 (from langchain-community)\n",
+            "  Downloading pydantic_settings-2.8.1-py3-none-any.whl.metadata (3.5 kB)\n",
+            "Requirement already satisfied: langsmith<0.4,>=0.1.125 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (0.3.18)\n",
+            "Collecting httpx-sse<1.0.0,>=0.4.0 (from langchain-community)\n",
+            "  Downloading httpx_sse-0.4.0-py3-none-any.whl.metadata (9.0 kB)\n",
+            "Requirement already satisfied: numpy<3,>=1.26.2 in /usr/local/lib/python3.11/dist-packages (from langchain-community) (2.0.2)\n",
+            "Requirement already satisfied: aiohappyeyeballs>=2.3.0 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (2.6.1)\n",
+            "Requirement already satisfied: aiosignal>=1.1.2 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.3.2)\n",
+            "Requirement already satisfied: attrs>=17.3.0 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (25.3.0)\n",
+            "Requirement already satisfied: frozenlist>=1.1.1 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.5.0)\n",
+            "Requirement already satisfied: multidict<7.0,>=4.5 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (6.2.0)\n",
+            "Requirement already satisfied: propcache>=0.2.0 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (0.3.0)\n",
+            "Requirement already satisfied: yarl<2.0,>=1.17.0 in /usr/local/lib/python3.11/dist-packages (from aiohttp<4.0.0,>=3.8.3->langchain-community) (1.18.3)\n",
+            "Collecting marshmallow<4.0.0,>=3.18.0 (from dataclasses-json<0.7,>=0.5.7->langchain-community)\n",
+            "  Downloading marshmallow-3.26.1-py3-none-any.whl.metadata (7.3 kB)\n",
+            "Collecting typing-inspect<1,>=0.4.0 (from dataclasses-json<0.7,>=0.5.7->langchain-community)\n",
+            "  Downloading typing_inspect-0.9.0-py3-none-any.whl.metadata (1.5 kB)\n",
+            "Requirement already satisfied: langchain-text-splitters<1.0.0,>=0.3.7 in /usr/local/lib/python3.11/dist-packages (from langchain<1.0.0,>=0.3.21->langchain-community) (0.3.7)\n",
+            "Requirement already satisfied: pydantic<3.0.0,>=2.7.4 in /usr/local/lib/python3.11/dist-packages (from langchain<1.0.0,>=0.3.21->langchain-community) (2.10.6)\n",
+            "Requirement already satisfied: jsonpatch<2.0,>=1.33 in /usr/local/lib/python3.11/dist-packages (from langchain-core<1.0.0,>=0.3.45->langchain-community) (1.33)\n",
+            "Requirement already satisfied: packaging<25,>=23.2 in /usr/local/lib/python3.11/dist-packages (from langchain-core<1.0.0,>=0.3.45->langchain-community) (24.2)\n",
+            "Requirement already satisfied: typing-extensions>=4.7 in /usr/local/lib/python3.11/dist-packages (from langchain-core<1.0.0,>=0.3.45->langchain-community) (4.12.2)\n",
+            "Requirement already satisfied: httpx<1,>=0.23.0 in /usr/local/lib/python3.11/dist-packages (from langsmith<0.4,>=0.1.125->langchain-community) (0.28.1)\n",
+            "Requirement already satisfied: orjson<4.0.0,>=3.9.14 in /usr/local/lib/python3.11/dist-packages (from langsmith<0.4,>=0.1.125->langchain-community) (3.10.15)\n",
+            "Requirement already satisfied: requests-toolbelt<2.0.0,>=1.0.0 in /usr/local/lib/python3.11/dist-packages (from langsmith<0.4,>=0.1.125->langchain-community) (1.0.0)\n",
+            "Requirement already satisfied: zstandard<0.24.0,>=0.23.0 in /usr/local/lib/python3.11/dist-packages (from langsmith<0.4,>=0.1.125->langchain-community) (0.23.0)\n",
+            "Collecting python-dotenv>=0.21.0 (from pydantic-settings<3.0.0,>=2.4.0->langchain-community)\n",
+            "  Downloading python_dotenv-1.1.0-py3-none-any.whl.metadata (24 kB)\n",
+            "Requirement already satisfied: charset-normalizer<4,>=2 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2->langchain-community) (3.4.1)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2->langchain-community) (3.10)\n",
+            "Requirement already satisfied: urllib3<3,>=1.21.1 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2->langchain-community) (2.3.0)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.11/dist-packages (from requests<3,>=2->langchain-community) (2025.1.31)\n",
+            "Requirement already satisfied: greenlet!=0.4.17 in /usr/local/lib/python3.11/dist-packages (from SQLAlchemy<3,>=1.4->langchain-community) (3.1.1)\n",
+            "Requirement already satisfied: anyio in /usr/local/lib/python3.11/dist-packages (from httpx<1,>=0.23.0->langsmith<0.4,>=0.1.125->langchain-community) (4.9.0)\n",
+            "Requirement already satisfied: httpcore==1.* in /usr/local/lib/python3.11/dist-packages (from httpx<1,>=0.23.0->langsmith<0.4,>=0.1.125->langchain-community) (1.0.7)\n",
+            "Requirement already satisfied: h11<0.15,>=0.13 in /usr/local/lib/python3.11/dist-packages (from httpcore==1.*->httpx<1,>=0.23.0->langsmith<0.4,>=0.1.125->langchain-community) (0.14.0)\n",
+            "Requirement already satisfied: jsonpointer>=1.9 in /usr/local/lib/python3.11/dist-packages (from jsonpatch<2.0,>=1.33->langchain-core<1.0.0,>=0.3.45->langchain-community) (3.0.0)\n",
+            "Requirement already satisfied: annotated-types>=0.6.0 in /usr/local/lib/python3.11/dist-packages (from pydantic<3.0.0,>=2.7.4->langchain<1.0.0,>=0.3.21->langchain-community) (0.7.0)\n",
+            "Requirement already satisfied: pydantic-core==2.27.2 in /usr/local/lib/python3.11/dist-packages (from pydantic<3.0.0,>=2.7.4->langchain<1.0.0,>=0.3.21->langchain-community) (2.27.2)\n",
+            "Collecting mypy-extensions>=0.3.0 (from typing-inspect<1,>=0.4.0->dataclasses-json<0.7,>=0.5.7->langchain-community)\n",
+            "  Downloading mypy_extensions-1.0.0-py3-none-any.whl.metadata (1.1 kB)\n",
+            "Requirement already satisfied: sniffio>=1.1 in /usr/local/lib/python3.11/dist-packages (from anyio->httpx<1,>=0.23.0->langsmith<0.4,>=0.1.125->langchain-community) (1.3.1)\n",
+            "Downloading langchain_community-0.3.20-py3-none-any.whl (2.5 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m2.5/2.5 MB\u001b[0m \u001b[31m21.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading dataclasses_json-0.6.7-py3-none-any.whl (28 kB)\n",
+            "Downloading httpx_sse-0.4.0-py3-none-any.whl (7.8 kB)\n",
+            "Downloading pydantic_settings-2.8.1-py3-none-any.whl (30 kB)\n",
+            "Downloading marshmallow-3.26.1-py3-none-any.whl (50 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m50.9/50.9 kB\u001b[0m \u001b[31m1.9 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading python_dotenv-1.1.0-py3-none-any.whl (20 kB)\n",
+            "Downloading typing_inspect-0.9.0-py3-none-any.whl (8.8 kB)\n",
+            "Downloading mypy_extensions-1.0.0-py3-none-any.whl (4.7 kB)\n",
+            "Installing collected packages: python-dotenv, mypy-extensions, marshmallow, httpx-sse, typing-inspect, pydantic-settings, dataclasses-json, langchain-community\n",
+            "Successfully installed dataclasses-json-0.6.7 httpx-sse-0.4.0 langchain-community-0.3.20 marshmallow-3.26.1 mypy-extensions-1.0.0 pydantic-settings-2.8.1 python-dotenv-1.1.0 typing-inspect-0.9.0\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install pypdf"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "fOOP20HTQZFF",
+        "outputId": "b75e5357-e41c-4712-e7b7-7678be59f371",
+        "collapsed": true
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting pypdf\n",
+            "  Downloading pypdf-5.4.0-py3-none-any.whl.metadata (7.3 kB)\n",
+            "Downloading pypdf-5.4.0-py3-none-any.whl (302 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m302.3/302.3 kB\u001b[0m \u001b[31m4.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: pypdf\n",
+            "Successfully installed pypdf-5.4.0\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Cargamos el PDF, leemos cada página y almacenamos el texto en una variable"
+      ],
+      "metadata": {
+        "id": "1cYBYighpAOY"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from langchain.document_loaders import PyPDFLoader\n",
+        "from langchain.text_splitter import RecursiveCharacterTextSplitter\n",
+        "\n",
+        "# Cargar el PDF desde ,las carpetas de Drive\n",
+        "pdf_path = \"/content/el principito.pdf\"\n",
+        "loader = PyPDFLoader(pdf_path)\n",
+        "documents = loader.load()\n",
+        "\n",
+        "# Extraer el texto de cada página\n",
+        "text = \"\\n\".join([doc.page_content for doc in documents])"
+      ],
+      "metadata": {
+        "id": "U92vrcUVQDOU"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Segmentamos el texto en chunks, dando la opción de que el texto en cada chunk se pueda solapar"
+      ],
+      "metadata": {
+        "id": "2wYj9up3pIrO"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "# Dividir en fragmentos (chunks)\n",
+        "text_splitter = RecursiveCharacterTextSplitter(chunk_size= 500, chunk_overlap = 200)\n",
+        "\n",
+        "chunks = text_splitter.split_text(text)  # revisar como usar .split_docuement para que sea compatible con chromaDB"
+      ],
+      "metadata": {
+        "id": "41ZL1IoZQ1W2"
+      },
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Creamos una función la cual, usando un modelo de embedding, me convierta texto a vector de números"
+      ],
+      "metadata": {
+        "id": "x1zA3Mi1pzIh"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sentence_transformers import SentenceTransformer\n",
+        "\n",
+        "def text_to_vector(text):\n",
+        "\n",
+        "    # Cargar el modelo de embeddings\n",
+        "    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')\n",
+        "\n",
+        "    # Convertir el texto en un vector numérico\n",
+        "    vector = model.encode(text)\n",
+        "\n",
+        "    return vector"
+      ],
+      "metadata": {
+        "id": "rhlz6xV3Q8B1",
+        "collapsed": true
+      },
+      "execution_count": 6,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Haciendo uso de text_to_vector, convertimos cada chunk del pdf en vector y lo almacenamos en una lista"
+      ],
+      "metadata": {
+        "id": "DtT5XNhhqFNm"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "chunk_vectors = [text_to_vector(chunk) for chunk in chunks]\n",
+        "print(len(chunk_vectors))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "1rTYoFznRbT_",
+        "outputId": "45132e4e-a9c9-43d7-9730-0f42974a5e46",
+        "collapsed": true
+      },
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "264\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "6OCNOJp3jVa0"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Construimos un árbol de tipo Ball Tree, que son más eficientes para vectores de grandes dimensiones"
+      ],
+      "metadata": {
+        "id": "ZU_7-zt6jI3x"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.neighbors import BallTree\n",
+        "import numpy as np\n",
+        "\n",
+        "def build_ball_tree(vectors):\n",
+        "    tree = BallTree(vectors, leaf_size=30)\n",
+        "    return tree\n",
+        "\n",
+        "def search_ball_tree(tree, query_vector, k=3):\n",
+        "    distances, indices = tree.query([query_vector], k=k)\n",
+        "    return distances, indices\n",
+        "\n",
+        "ballTree = build_ball_tree(chunk_vectors)"
+      ],
+      "metadata": {
+        "id": "_epAbXrFjWYM"
+      },
+      "execution_count": 14,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Construimos un árbol de tipo KD Tree para comparar su eficiencia contra el Ball tree"
+      ],
+      "metadata": {
+        "id": "pwQmqQn0Y3mQ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from sklearn.neighbors import KDTree\n",
+        "import numpy as np\n",
+        "\n",
+        "def build_kd_tree(vectors):\n",
+        "    tree = KDTree(vectors, leaf_size=30)\n",
+        "    return tree\n",
+        "\n",
+        "def search_kd_tree(tree, query_vector, k=3):\n",
+        "    distances, indices = tree.query([query_vector], k=k)\n",
+        "    return distances, indices\n",
+        "\n",
+        "kdTree = build_kd_tree(chunk_vectors)"
+      ],
+      "metadata": {
+        "id": "bryqkFFTY_QC"
+      },
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "# Prueba; Ingresamos una frase u oración, la convertimos a su versión de vector por medio del modelo de embedding y realizamos la busqueda en el árbol, al final imprimimos el texto ingresado y el texto resultante que tiene mayor similitud"
+      ],
+      "metadata": {
+        "id": "hfXqsRbpsG7L"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import timeit\n",
+        "\n",
+        "text = input(\"Ingrese una frase: \")\n",
+        "query_vector = text_to_vector(text)\n",
+        "\n",
+        "# Medir tiempo para BallTree\n",
+        "start_time = timeit.default_timer()\n",
+        "distancesBall, indicesBall = search_ball_tree(ballTree, query_vector, k=1)\n",
+        "ball_time = timeit.default_timer() - start_time\n",
+        "\n",
+        "# Medir tiempo para KDTree\n",
+        "start_time = timeit.default_timer()\n",
+        "distancesKd, indicesKd = search_kd_tree(kdTree, query_vector, k=1)\n",
+        "kd_time = timeit.default_timer() - start_time\n",
+        "\n",
+        "# Imprimir resultados\n",
+        "print(\"\\nFrase ingresada: \" + text + \"\\n\")\n",
+        "print(f\"Frase encontrada por el BallTree: {chunks[indicesBall[0][0]]}\")\n",
+        "print(f\"Tiempo de búsqueda con BallTree: {ball_time:.6f} segundos\\n\")\n",
+        "\n",
+        "print(f\"Frase encontrada por el KDTree: {chunks[indicesKd[0][0]]}\")\n",
+        "print(f\"Tiempo de búsqueda con KDTree: {kd_time:.6f} segundos\\n\")\n",
+        "\n",
+        "# Comparación\n",
+        "if ball_time < kd_time:\n",
+        "    print(\"BallTree fue más rápido.\")\n",
+        "else:\n",
+        "    print(\"KDTree fue más rápido.\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "x0cSUor-sijR",
+        "outputId": "91f06a27-5430-4fc5-ce02-a93c8ae4304f"
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Ingrese una frase: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa  Frase ingresada: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa\n",
+            "\n",
+            "Frase ingresada: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa  Frase ingresada: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa\n",
+            "\n",
+            "Frase encontrada por el BallTree: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa\tpersona\tmayor\tvive\n",
+            "en\tFrancia,\tdonde\tpasa\thambre\ty\tfrío.\tVerdaderamente\tnecesita\tconsuelo.\tSi\n",
+            "todas\tesas\texcusas\tno\tbastasen,\tbien\tpuedo\tdedicar\teste\tlibro\tal\tniño\tque\tuna\n",
+            "vez\tfue\testa\tpersona\tmayor.\tTodos\tlos\tmayores\than\tsido\tprimero\tniños.\t(Pero\n",
+            "pocos\tlo\trecuerdan).\tCorrijo,\tpues,\tmi\tdedicatoria:\n",
+            "A\tLEON\tWERTH\tCUANDO\tERA\tNIÑO\n",
+            "\t\n",
+            "\t\n",
+            "I\n",
+            "\t\n",
+            "Cuando\tyo\ttenía\tseis\taños\tvi\ten\tun\tlibro\tsobre\tla\tselva\tvirgen\tque\tse\n",
+            "Tiempo de búsqueda con BallTree: 0.001040 segundos\n",
+            "\n",
+            "Frase encontrada por el KDTree: hasta\tlos\tlibros\tpara\tniños.\tTengo\tuna\ttercera\texcusa:\testa\tpersona\tmayor\tvive\n",
+            "en\tFrancia,\tdonde\tpasa\thambre\ty\tfrío.\tVerdaderamente\tnecesita\tconsuelo.\tSi\n",
+            "todas\tesas\texcusas\tno\tbastasen,\tbien\tpuedo\tdedicar\teste\tlibro\tal\tniño\tque\tuna\n",
+            "vez\tfue\testa\tpersona\tmayor.\tTodos\tlos\tmayores\than\tsido\tprimero\tniños.\t(Pero\n",
+            "pocos\tlo\trecuerdan).\tCorrijo,\tpues,\tmi\tdedicatoria:\n",
+            "A\tLEON\tWERTH\tCUANDO\tERA\tNIÑO\n",
+            "\t\n",
+            "\t\n",
+            "I\n",
+            "\t\n",
+            "Cuando\tyo\ttenía\tseis\taños\tvi\ten\tun\tlibro\tsobre\tla\tselva\tvirgen\tque\tse\n",
+            "Tiempo de búsqueda con KDTree: 0.000871 segundos\n",
+            "\n",
+            "KDTree fue más rápido.\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
